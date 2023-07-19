@@ -80,5 +80,8 @@ set.seed(1990)
 input_rar = single_rarefy(input, 2500) #282 Samples remaining
 ```
 
+![Reads per sample](https://github.com/LadyGrant/Kerbel/assets/95941680/168c7506-bc7f-403d-be81-48c372fd602d)
+
+
 
 
