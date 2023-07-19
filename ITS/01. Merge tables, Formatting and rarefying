@@ -1,0 +1,83 @@
+# Merging tables, formatting and rairifying samples
+## Merging tables and formatting
+Before any analysis, we must merge the taxonomy table with the ASV table that was previously created in Qiime 2. There are multiple ways to do this but here we are using left_join.
+
+```
+# Load the needed libraries
+library(tidyverse) # ggplot2 + dplyr
+
+# If you are using R projects, setting the directory is not always needed.
+# You can use getwd() show you what directory you are working in
+#set your working directory
+setwd("~/Desktop/Agbiome/Kerbel/02_ITS/R_analysis/Kerbel_ITS/")
+```
+
+Before reading in the tables, open them to check their formatting. Qiime will give a confidence score in a column named "Confidence" on the taxonomy. I remove this in Excel before reading it back in, however this can also be done in R.
+Other changes I do in Excel:
+Change "Taxon" header to "taxonomy".
+Change "Feature ID" to "ASV_ID". (Formatting needed for McToolsR)
+Delete: "#q2:types" and "categorical" headers from top of page.
+
+```
+# Read in tables
+Taxonomy <- read.delim("~/Desktop/Agbiome/Kerbel/02_ITS/Qiime/Taxonomy_ITS.txt")
+ASV_Count <- read.delim("~/Desktop/Agbiome/Kerbel/02_16S/Qiime/ASV_Count_ITS.txt")
+
+# Merge via "ASV_ID"
+# Check each data frame to see how R has labeled the columns
+ASV_Table_ <- left_join(Taxonomy, ASV_Count, by = "ASV_ID")
+```
+
+Write out table, for more formatting in excel. The first numbered column can be removed. For MCtoolsR, the "taxonomy" column must be on the right end of the document. Remove blanks, mitochondria, euk, and chloroplast (if any). These are your NA's but they should have been removed in your QIIME protocol.
+The "ASV_ID" column needs a "#" in front of it. Ex: "#ASV_ID".
+
+```
+write.csv(ASV_Table_GTDB, "ASV_Table_16S_GTDB.txt")
+```
+
+## Rarefying samples
+Here is where we use MCtoolsR. There are many different ways to rarefy, but this package, which was designed for microbial ecology, has short commands. The data loaded creates list in R that can be easily accessed by "$".
+
+```
+# Loading taxa tables and metadata using MCtoolsR
+
+# Load needed libraries 
+library(mctoolsr)
+# The taxon table itself: "data_loaded"
+tax_table_fp = "ASV_Table_ITS.txt"
+# The metadata: "map_loaded"
+map_fp = "ITS_Metadata_R.txt"
+# Merge your mapping file and your ASV table
+# Common error: Samples with mismatched names will not load
+# Common error: NA's in your ASV table will cause blank tables to load
+input = load_taxa_table(tax_table_fp, map_fp) # 311 samples loaded
+# for merging tables later in ggplot later
+map = input$map_loaded %>% 
+  rownames_to_column("Sample_ID")
+```
+
+Here we pull out the reads per sample to decide what number we want to rarefy at. Then we graph it using a sinple bar graph. Finally the last spet is rarfying the reads. The rarefied data set is what will be used for all further analysis. 
+
+```
+# Returning number of reads per sample
+seq_num <- as.data.frame(sort(colSums(input$data_loaded))) %>%
+  rownames_to_column("Sample_ID") %>%
+  rename(read = `sort(colSums(input$data_loaded))`) %>%
+  left_join(map, by = "Sample_ID")
+
+# Creating a bar graph of reads per sample#, red line on y- intercept shows where we rarified
+# Colors = CT = #CA054D", MT = "#3B1C32", ST = "#6FA37F"
+ggplot(seq_num, aes(Sample_ID, read)) + 
+  geom_bar(stat="identity", aes(fill = Treatment)) + 
+  scale_fill_manual(values = c("#CA054D", "#3B1C32", "#6FA37F")) +
+  geom_hline(yintercept  = 10000, color = "red") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust=1, size = 5)) + 
+  ggtitle("Reads per Sample") + theme(plot.title = element_text(hjust = 0.5)) 
+
+# Rarefying sample reads
+set.seed(1990)
+input_rar = single_rarefy(input, 2500) #282 Samples remaining
+```
+
+
