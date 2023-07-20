@@ -105,7 +105,7 @@ Treatment:Time:Depth:Block:Direction   3    1.264 0.01031 1.0172  0.268
 Residual                             206   85.353 0.69603              
 Total                                281  122.628 1.00000
 ```
-Bwlow, we changed some variable colors to view some patterns better.
+Below, we changed some variable colors to view some patterns better. These are all the same NMDS!! just colored by different patterns.
 
 ```
 # Colored by depth
@@ -153,8 +153,6 @@ NMDS_all <- ord_map %>%
 NMDS_all
 ```
 ![Screen Shot 2023-07-20 at 11 26 25 AM](https://github.com/LadyGrant/Kerbel/assets/95941680/97ffe287-0be4-435d-94db-f2bd24c79c17)
-
-```
 
 
 
