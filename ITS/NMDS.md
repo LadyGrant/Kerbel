@@ -105,3 +105,77 @@ Treatment:Time:Depth:Block:Direction   3    1.264 0.01031 1.0172  0.268
 Residual                             206   85.353 0.69603              
 Total                                281  122.628 1.00000
 ```
+Bwlow, we changed some variable colors to view some patterns better.
+
+```
+# Colored by depth
+# Deep: "#3395FF", Rhizosphere: "#44097A", Surface: "#FF33FB"
+NMDS_all <- ord_map %>% 
+  ggplot(aes(MDS1, MDS2)) +
+  geom_point(aes(shape = Depth, fill = Depth, color = Depth)) +
+  scale_fill_manual(values = c("#3395FF","#44097A", "#FF33FB")) +
+  scale_color_manual(values = c("#3395FF","#44097A", "#FF33FB")) +
+  scale_shape_manual(values = c(16, 17, 16)) +
+  stat_ellipse(aes(color = Depth), level = 0.95)+
+  ggtitle("Kerbel Fungal Full Site Depth") + theme_classic() +
+  theme(plot.title = element_text(hjust = 0.5))
+NMDS_all
+```
+![Screen Shot 2023-07-20 at 11 22 48 AM](https://github.com/LadyGrant/Kerbel/assets/95941680/9fa38129-4d96-451a-aa92-7a9530b55696)
+
+```
+# Colored by time
+# July: "#3395FF", May: "#44097A", September: "#FF33FB"
+NMDS_all <- ord_map %>% 
+  ggplot(aes(MDS1, MDS2)) +
+  geom_point(aes(shape = Depth, fill = Time, color = Time)) +
+  scale_fill_manual(values = c("#3395FF","#44097A", "#FF33FB")) +
+  scale_color_manual(values = c("#3395FF","#44097A", "#FF33FB")) +
+  scale_shape_manual(values = c(16, 17, 16)) +
+  stat_ellipse(aes(color = Time), level = 0.95)+
+  ggtitle("Kerbel Fungal Full Site Time") + theme_classic() +
+  theme(plot.title = element_text(hjust = 0.5))
+NMDS_all
+```
+![Screen Shot 2023-07-20 at 11 24 39 AM](https://github.com/LadyGrant/Kerbel/assets/95941680/f6b8849f-1f00-459c-a1f8-89511be7fe66)
+
+```
+# colored by direction
+NMDS_all <- ord_map %>% 
+  ggplot(aes(MDS1, MDS2)) +
+  geom_point(aes(fill = Direction, color = Direction, shape = Depth)) +
+  scale_fill_manual(values = c("#3395FF","#44097A", "#FF33FB")) +
+  scale_color_manual(values = c("#3395FF","#44097A", "#FF33FB")) +
+  scale_shape_manual(values = c(16, 17, 16)) +
+  stat_ellipse(aes(color = Direction), level = 0.95)+
+  ggtitle("Kerbel Fungal Full Site Direction") + theme_classic() +
+  theme(plot.title = element_text(hjust = 0.5))
+NMDS_all
+```
+![Screen Shot 2023-07-20 at 11 26 25 AM](https://github.com/LadyGrant/Kerbel/assets/95941680/97ffe287-0be4-435d-94db-f2bd24c79c17)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
