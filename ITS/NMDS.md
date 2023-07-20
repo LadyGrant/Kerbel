@@ -154,6 +154,120 @@ NMDS_all
 ```
 ![Screen Shot 2023-07-20 at 11 26 25 AM](https://github.com/LadyGrant/Kerbel/assets/95941680/97ffe287-0be4-435d-94db-f2bd24c79c17)
 
+This project has a lot a variables, so lets's filter some out to see if we can get a better grasp at what is going on. Here, we are using the mctoolsr way of filtering, however a vegan or tidyverse filter will work as well. 
+
+```
+# Filtering down to surface, block 1, north
+input_S = filter_data(input_rar, 'Depth', keep_vals = "S") # 135 samples left
+input_S_B1 = filter_data(input_S, "Block", keep_vals = "B1") #67 samples left
+input_S_B1_N = filter_data(input_S_B1, "Direction", keep_vals = "N") # 34 samples
+
+# Set a new seed and calcualte new distance matrix
+set.seed(1234)
+dm = calc_dm(input_S_B1_N$data_loaded)
+ord = calc_ordination(dm, 'nmds')
+
+# Add MDS1 and MDS2 points to mapping file for ggplot
+ord_map <- ord %>% 
+  rownames_to_column("Sample_ID") %>%
+  left_join(map)
+# Colored by Treatment
+#  CT: #CA054D, MT: #3B1C32", ST: #6FA37F
+NMDS_all <- ord_map %>% 
+  ggplot(aes(MDS1, MDS2)) +
+  geom_point(aes(color = Treatment)) +
+  scale_color_manual(values = c("#CA054D", "#3B1C32", "#6FA37F")) +
+  scale_shape_manual(values = c(16, 16, 16)) +
+  stat_ellipse(aes(color = Treatment), level = 0.95)+
+  ggtitle("Kerbel Fungal Surface") + theme_classic() +
+  theme(plot.title = element_text(hjust = 0.5))
+NMDS_all
+```
+
+![Screen Shot 2023-07-20 at 11 38 09 AM](https://github.com/LadyGrant/Kerbel/assets/95941680/0511ad9f-cb47-4a0e-9680-4aab017d15cb)
+
+Now let's run a PERMANOVA for the two varibles left, treatment and time.
+
+```
+# run a PERMANOVA on your data
+permanova <- adonis2(dm ~ Treatment * Time,
+  data = input_S_B1_N$map_loaded, permutations= 999)
+```
+```
+Permutation test for adonis under reduced model
+Terms added sequentially (first to last)
+Permutation: free
+Number of permutations: 999
+
+adonis2(formula = dm ~ Treatment * Time, data = input_S_B1_N$map_loaded, permutations = 999)
+               Df SumOfSqs      R2      F Pr(>F)    
+Treatment       2   1.3404 0.09425 1.6273  0.001 ***
+Time            2   0.8854 0.06226 1.0749  0.074 .  
+Treatment:Time  4   1.6999 0.11953 1.0319  0.169    
+Residual       25  10.2961 0.72396                  
+Total          33  14.2218 1.00000                  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+```
+Now let's check the rhizosphere.
+
+```
+# Filtering down to surface, block 1, north
+Rhiz = filter_data(input_rar, 'Depth', keep_vals = "rhizo") # 16 samples left
+
+# Set a new seed and calcualte new distance matrix
+set.seed(444)
+dm = calc_dm(Rhiz$data_loaded)
+ord = calc_ordination(dm, 'nmds')
+
+# Add MDS1 and MDS2 points to mapping file for ggplot
+ord_map <- ord %>% 
+  rownames_to_column("Sample_ID") %>%
+  left_join(map)
+
+# Colored by Treatment
+#  CT: #CA054D, MT: #3B1C32", ST: #6FA37F
+NMDS_all <- ord_map %>% 
+  ggplot(aes(MDS1, MDS2)) +
+  geom_point(aes(color = Treatment)) +
+  scale_color_manual(values = c("#CA054D", "#3B1C32", "#6FA37F")) +
+  scale_shape_manual(values = c(16, 16, 16)) +
+  stat_ellipse(aes(color = Treatment), level = 0.95)+
+  ggtitle("Kerbel Fungal Rhizosphere") + theme_classic() +
+  theme(plot.title = element_text(hjust = 0.5))
+NMDS_all
+```
+![Screen Shot 2023-07-20 at 11 46 47 AM](https://github.com/LadyGrant/Kerbel/assets/95941680/5355e1e6-7733-46bb-9b9c-e32d723ebc19)
+
+Run the PERMANOVA on Rhizosphere and time.
+
+```
+# run a PERMANOVA on your data
+permanova <- adonis2(dm ~ Treatment * Time,
+  data = Rhiz$map_loaded, permutations= 999)
+```
+```
+Permutation test for adonis under reduced model
+Terms added sequentially (first to last)
+Permutation: free
+Number of permutations: 999
+
+adonis2(formula = dm ~ Treatment * Time, data = Rhiz$map_loaded, permutations = 999)
+               Df SumOfSqs      R2      F Pr(>F)    
+Treatment       2   1.0409 0.15888 1.2511  0.001 ***
+Time            1   0.4485 0.06846 1.0782  0.134    
+Treatment:Time  1   0.4862 0.07421 1.1688  0.016 *  
+Residual       11   4.5758 0.69845                  
+Total          15   6.5514 1.00000                  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+```
+
+
+
+
+
+
 
 
 
