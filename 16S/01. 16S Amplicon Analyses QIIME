@@ -1,0 +1,47 @@
+These commands and flags are valid for release 2021.2
+Updated: August 19th, 2024
+Lady Grant - Wrighton lab
+
+# Installing QIIME 2
+Please follow the directions for installing Qiime 2 on the server found here:
+https://docs.qiime2.org/2022.11/install/native/
+
+Connect to the server:
+```
+ssh zenith
+password: superhardpassword1234
+```
+
+When you first log in you are in your directory, you will need to navigate to your project directory.
+The project directory for Kerbel is: Agribiome/Kerbel
+Once you have navigated there, you will need to make a directory named "16S"
+```
+cd ../home/projects/Agribiome/Kerbel/
+mkdir 16S
+```
+
+Command cheat sheet for Mac terminal:
+https://www.makeuseof.com/tag/mac-terminal-commands-cheat-sheet/
+Protocol follows this amplicon pipeline:
+https://github.com/WrightonLabCSU/amplicon_pipeline/blob/main/qiime_tutorial.Rmd
+
+QIIME 2 home page:
+https://qiime2.org/
+
+QIIME 2 GitHub:
+https://github.com/qiime2/
+
+All the original data coming fresh off the sequencer will be put here:
+```
+/ORG-Data-wrighton/in_house_amplicon_libraries/
+```
+
+# 1. Activate QIIME environment on server prior to running anything
+Once activated "qiime2-2021.2" will show up before your name. Ex: (qiime2-2021.2) [egrant@zenith 16S]$
+If the qiime environment is not activated, the following error will be shown:
+```
+error "bash: qiime: command not found"'''
+```
+# This assumes a conda installation and qiime2 version 2021.2
+source /opt/Miniconda2/miniconda2/bin/activate qiime2-2021.2 
+'''
