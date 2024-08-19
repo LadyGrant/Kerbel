@@ -7,8 +7,10 @@ Please follow the directions for installing Qiime 2 on the server found here:
 https://docs.qiime2.org/2022.11/install/native/
 
 Connect to the server:
+```
 ssh zenith
 password: superhardpassword1234
+```
 
 When you first log in you are in your directory, you will need to navigate to your project directory.
 The project directory for Kerbel is: Agribiome/Kerbel
